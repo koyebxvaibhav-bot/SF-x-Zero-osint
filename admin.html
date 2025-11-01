@@ -12,7 +12,7 @@
       text-align: center;
       overflow: hidden;
     }
-    .login-box, .dashboard {
+    .box {
       background: rgba(15, 0, 0, 0.85);
       border: 1px solid red;
       border-radius: 12px;
@@ -32,10 +32,69 @@
       border-radius: 6px;
     }
     .btn {
-      display: inline-block;
       background: black;
       color: red;
       padding: 10px 20px;
-      margin-top: 10px;
       border: 1px solid red;
-      border-radius
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover { background: red; color: white; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div id="particles"></div>
+  <div class="box" id="loginBox">
+    <h2>🔐 Admin Login</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button class="btn" onclick="login()">Login</button>
+  </div>
+
+  <div class="box" id="dashboard" style="display:none;">
+    <h2>📊 Admin Dashboard</h2>
+    <p><strong>Total Visits:</strong> <span id="visits">Loading...</span></p>
+    <p><strong>Last Updated:</strong> <span id="updated"></span></p>
+    <p><strong>Website:</strong> <a href="https://koyebxvaibhav-bot.github.io" target="_blank">SF × ZERO OSINT</a></p>
+    <button class="btn" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    const adminUser = "koyebxvaibhav-bot";
+    const adminPass = "C!7rP9vQ";
+
+    // CountAPI key setup
+    const counterKey = "sfzeroosint_site_visits";
+
+    async function updateCounter() {
+      try {
+        const res = await fetch(`https://api.countapi.xyz/get/sfzeroosint/${counterKey}`);
+        const data = await res.json();
+        document.getElementById("visits").textContent = data.value.toLocaleString();
+        document.getElementById("updated").textContent = new Date().toLocaleString();
+      } catch (e) {
+        document.getElementById("visits").textContent = "Error loading data";
+      }
+    }
+
+    function login() {
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+      if (user === adminUser && pass === adminPass) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        updateCounter();
+      } else {
+        alert("Invalid login details!");
+      }
+    }
+
+    function logout() {
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("loginBox").style.display = "block";
+    }
+  </script>
+</body>
+</html>
