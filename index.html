@@ -8,21 +8,52 @@
   <link rel="icon" type="image/png" href="logo.png">
   <script src="particles.js" defer></script>
 
-  <!-- ✅ Add Visit Counter Script -->
+  <!-- ✅ Visit Counter + Analytics Script -->
   <script>
-    // This automatically increases counter every time page loads
-    fetch('https://api.countapi.xyz/hit/sfzeroosint/sfzeroosint_site_visits')
-      .then(res => res.json())
-      .then(data => console.log("Visit recorded:", data.value))
-      .catch(err => console.warn("Visit counter failed:", err));
+    async function logVisit() {
+      try {
+        // 🔹 Increment total visit counter (CountAPI)
+        await fetch('https://api.countapi.xyz/hit/sfzeroosint/site_visits');
+
+        // 🔹 Gather local visitor analytics
+        const ua = navigator.userAgent;
+        const os = navigator.platform;
+        const browser = ua.includes("Chrome") ? "Chrome" :
+                        ua.includes("Firefox") ? "Firefox" :
+                        ua.includes("Safari") ? "Safari" : "Other";
+
+        // 🔹 Fetch visitor country (free API)
+        const countryRes = await fetch("https://ipapi.co/json/");
+        const countryData = await countryRes.json();
+
+        const visitData = {
+          time: new Date().toISOString(),
+          country: countryData.country_name || "Unknown",
+          os: os,
+          browser: browser
+        };
+
+        // Save in localStorage (for Admin Dashboard)
+        localStorage.setItem("lastVisit", JSON.stringify(visitData));
+        console.log("✅ Visit logged:", visitData);
+
+      } catch (err) {
+        console.warn("⚠️ Visit log failed:", err);
+      }
+    }
+
+    logVisit();
   </script>
 
   <style>
-    /* Neon Red Animated Background */
+    /* === Neon Red Animated Background === */
     body {
       background: radial-gradient(circle at center, #000000 0%, #090000 80%, #000000 100%);
       animation: pulse 5s infinite alternate;
       overflow: hidden;
+      color: white;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
     }
     @keyframes pulse {
       0% { background-color: #000000; box-shadow: 0 0 20px red; }
@@ -39,6 +70,8 @@
       padding: 10px 20px;
       border-radius: 8px;
       transition: 0.3s;
+      display: inline-block;
+      margin: 10px;
     }
     a.btn:hover {
       background: red;
@@ -50,6 +83,24 @@
       color: red;
       font-size: 14px;
     }
+    .admins {
+      margin-top: 30px;
+    }
+    .admins h3 {
+      color: red;
+      margin-bottom: 10px;
+    }
+    .admins ul {
+      list-style: none;
+      padding: 0;
+    }
+    .admins a {
+      color: white;
+      text-decoration: none;
+    }
+    .admins a:hover {
+      color: red;
+    }
   </style>
 </head>
 
@@ -57,7 +108,7 @@
   <div id="particles"></div>
 
   <header>
-    <img src="logo.png" alt="OSINT Logo" class="logo" />
+    <img src="logo.png" alt="OSINT Logo" class="logo" style="width:120px;" />
     <h1>SF × ZERO OSINT</h1>
     <p class="tagline">The Art of Open Source Intelligence</p>
   </header>
@@ -70,7 +121,6 @@
       <a href="admin.html" class="btn">Admin Login</a>
     </div>
 
-    <!-- ✅ You can remove the hits.sh badge if you want, CountAPI handles visit counts -->
     <div class="counter">
       <img src="https://hits.sh/koyebxvaibhav-bot.github.io.svg?style=for-the-badge&label=visits&color=red&logo=github" alt="visits">
     </div>
