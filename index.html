@@ -7,7 +7,52 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="logo.png">
   <script src="particles.js" defer></script>
+
+  <!-- ✅ Add Visit Counter Script -->
+  <script>
+    // This automatically increases counter every time page loads
+    fetch('https://api.countapi.xyz/hit/sfzeroosint/sfzeroosint_site_visits')
+      .then(res => res.json())
+      .then(data => console.log("Visit recorded:", data.value))
+      .catch(err => console.warn("Visit counter failed:", err));
+  </script>
+
+  <style>
+    /* Neon Red Animated Background */
+    body {
+      background: radial-gradient(circle at center, #000000 0%, #090000 80%, #000000 100%);
+      animation: pulse 5s infinite alternate;
+      overflow: hidden;
+    }
+    @keyframes pulse {
+      0% { background-color: #000000; box-shadow: 0 0 20px red; }
+      100% { background-color: #0a0000; box-shadow: 0 0 60px red; }
+    }
+    h1, .tagline, footer, .btn, .admins, .counter {
+      text-shadow: 0 0 10px red, 0 0 20px red;
+    }
+    a.btn {
+      background: black;
+      border: 1px solid red;
+      color: red;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+    a.btn:hover {
+      background: red;
+      color: white;
+      box-shadow: 0 0 20px red;
+    }
+    footer {
+      margin-top: 20px;
+      color: red;
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
   <div id="particles"></div>
 
@@ -25,6 +70,7 @@
       <a href="admin.html" class="btn">Admin Login</a>
     </div>
 
+    <!-- ✅ You can remove the hits.sh badge if you want, CountAPI handles visit counts -->
     <div class="counter">
       <img src="https://hits.sh/koyebxvaibhav-bot.github.io.svg?style=for-the-badge&label=visits&color=red&logo=github" alt="visits">
     </div>
@@ -40,7 +86,7 @@
   </main>
 
   <footer>
-    © 2025 SF × ZERO OSINT | Designed by Karl
+    © 2025 SF × ZERO OSINT | Designed by @AnonymousVuy
   </footer>
 </body>
 </html>
