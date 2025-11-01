@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin Dashboard | SF × ZERO OSINT</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.admin-box{
+  background:rgba(0,0,0,0.7);
+  border:2px solid red;
+  border-radius:15px;
+  padding:30px;
+  max-width:400px;
+  margin:80px auto;
+  color:white;
+  text-align:center;
+}
+input{padding:10px;width:80%;margin-bottom:15px;border-radius:10px;border:none;}
+button{background:red;color:white;border:none;padding:10px 20px;border-radius:10px;cursor:pointer;}
+.hidden{display:none;}
+.count{font-size:28px;margin-top:15px;}
+</style>
+</head>
+<body>
+  <div class="admin-box">
+    <h2>🔐 Admin Dashboard</h2>
+    <div id="loginArea">
+      <p>Enter password:</p>
+      <input id="pass" type="password" placeholder="Admin password"><br>
+      <button id="loginBtn">Login</button>
+    </div>
+    <div id="dash" class="hidden">
+      <h3>Total Visits</h3>
+      <div id="count" class="count">Loading...</div>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+<script>
+const PASS="C!7rP9vQ";
+const SITE="koyebxvaibhav-bot.github.io";
+
+const loginBtn=document.getElementById("loginBtn");
+const logoutBtn=document.getElementById("logoutBtn");
+const loginArea=document.getElementById("loginArea");
+const dash=document.getElementById("dash");
+const count=document.getElementById("count");
+
+function fetchCount(){
+  fetch(`https://hits.sh/${SITE}.json`)
+    .then(r=>r.json())
+    .then(d=>count.textContent=d.hits+" visits")
+    .catch(()=>count.textContent="Error");
+}
+
+loginBtn.onclick=()=>{
+  if(document.getElementById("pass").value===PASS){
+    loginArea.classList.add("hidden");
+    dash.classList.remove("hidden");
+    fetchCount();
+  }else alert("Wrong password");
+};
+
+logoutBtn.onclick=()=>{
+  dash.classList.add("hidden");
+  loginArea.classList.remove("hidden");
+};
+</script>
+</body>
+</html>
