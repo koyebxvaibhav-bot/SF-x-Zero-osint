@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard | SF × ZERO OSINT</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
   <script src="particles.js" defer></script>
   <style>
     body {
       color: white;
       text-align: center;
+      overflow: hidden;
     }
     .login-box, .dashboard {
-      background: rgba(20, 0, 0, 0.7);
+      background: rgba(15, 0, 0, 0.85);
       border: 1px solid red;
       border-radius: 12px;
       box-shadow: 0 0 20px red;
-      width: 320px;
+      width: 350px;
       margin: 10% auto;
       padding: 25px;
+      animation: fadeIn 1s ease;
     }
     input {
       width: 90%;
@@ -36,78 +38,4 @@
       padding: 10px 20px;
       margin-top: 10px;
       border: 1px solid red;
-      border-radius: 6px;
-      cursor: pointer;
-      text-decoration: none;
-      box-shadow: 0 0 10px red;
-      transition: 0.2s;
-    }
-    .btn:hover {
-      background: red;
-      color: black;
-    }
-    .counter {
-      font-size: 2em;
-      color: red;
-      text-shadow: 0 0 15px red;
-    }
-  </style>
-</head>
-<body>
-  <div id="particles"></div>
-
-  <div class="login-box" id="loginBox">
-    <h2>Admin Login</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button class="btn" onclick="login()">Login</button>
-  </div>
-
-  <div class="dashboard" id="dashboard" style="display:none;">
-    <h2>👑 Admin Dashboard</h2>
-    <p>Total Visits:</p>
-    <div class="counter" id="visitCount">0</div>
-    <button class="btn" onclick="logout()">Logout</button>
-  </div>
-
-  <script>
-    const USER = "koyebxvaibhav-bot";
-    const PASS = "C!7rP9vQ";
-
-    function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
-
-      if (user === USER && pass === PASS) {
-        localStorage.setItem("osintAdmin", "true");
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-        updateVisits();
-      } else {
-        alert("❌ Invalid credentials");
-      }
-    }
-
-    function logout() {
-      localStorage.removeItem("osintAdmin");
-      location.reload();
-    }
-
-    function updateVisits() {
-      let count = localStorage.getItem("osintVisits") || 0;
-      document.getElementById("visitCount").innerText = count;
-    }
-
-    window.onload = function() {
-      // increase visits on home load (simulated)
-      let count = localStorage.getItem("osintVisits") || 0;
-      localStorage.setItem("osintVisits", Number(count));
-      if (localStorage.getItem("osintAdmin") === "true") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-        updateVisits();
-      }
-    };
-  </script>
-</body>
-</html>
+      border-radius
