@@ -6,31 +6,55 @@
   <title>Admin Dashboard | SF × ZERO OSINT</title>
   <link rel="stylesheet" href="style.css" />
   <script src="particles.js" defer></script>
+
   <style>
     body {
+      background: radial-gradient(circle at center, #000000 0%, #0a0000 100%);
       color: white;
       text-align: center;
       overflow: hidden;
+      font-family: 'Courier New', monospace;
+      animation: bgPulse 5s infinite alternate;
     }
+
+    @keyframes bgPulse {
+      0% { box-shadow: 0 0 20px red; }
+      100% { box-shadow: 0 0 60px red; }
+    }
+
     .box {
-      background: rgba(15, 0, 0, 0.85);
+      background: rgba(10, 0, 0, 0.85);
       border: 1px solid red;
       border-radius: 12px;
-      box-shadow: 0 0 20px red;
+      box-shadow: 0 0 25px red;
       width: 350px;
       margin: 10% auto;
       padding: 25px;
       animation: fadeIn 1s ease;
+      text-shadow: 0 0 10px red;
     }
+
+    h2 {
+      color: red;
+      margin-bottom: 15px;
+      text-shadow: 0 0 20px red, 0 0 40px red;
+    }
+
     input {
       width: 90%;
       padding: 10px;
-      margin: 10px 0;
+      margin: 8px 0;
       background: black;
       color: red;
       border: 1px solid red;
       border-radius: 6px;
+      outline: none;
+      transition: 0.3s;
     }
+    input:focus {
+      box-shadow: 0 0 10px red;
+    }
+
     .btn {
       background: black;
       color: red;
@@ -39,55 +63,82 @@
       border-radius: 6px;
       cursor: pointer;
       transition: 0.3s;
+      margin-top: 10px;
     }
-    .btn:hover { background: red; color: white; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .btn:hover {
+      background: red;
+      color: white;
+      box-shadow: 0 0 20px red;
+    }
+
+    a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
+
 <body>
   <div id="particles"></div>
+
+  <!-- 🔐 Login Section -->
   <div class="box" id="loginBox">
     <h2>🔐 Admin Login</h2>
-    <input type="text" id="username" placeholder="Username" />
+    <input type="text" id="username" placeholder="Username" autocomplete="off" />
     <input type="password" id="password" placeholder="Password" />
     <button class="btn" onclick="login()">Login</button>
   </div>
 
+  <!-- 📊 Dashboard Section -->
   <div class="box" id="dashboard" style="display:none;">
     <h2>📊 Admin Dashboard</h2>
     <p><strong>Total Visits:</strong> <span id="visits">Loading...</span></p>
-    <p><strong>Last Updated:</strong> <span id="updated"></span></p>
-    <p><strong>Website:</strong> <a href="https://koyebxvaibhav-bot.github.io" target="_blank">SF × ZERO OSINT</a></p>
+    <p><strong>Last Updated:</strong> <span id="updated">—</span></p>
+    <p><strong>Website:</strong> <a href="https://koyebxvaibhav-bot.github.io/SF-x-Zero-osint/" target="_blank">SF × ZERO OSINT</a></p>
     <button class="btn" onclick="logout()">Logout</button>
   </div>
 
   <script>
     const adminUser = "koyebxvaibhav-bot";
     const adminPass = "C!7rP9vQ";
-
-    // CountAPI key setup
     const counterKey = "sfzeroosint_site_visits";
 
     async function updateCounter() {
+      const visitsElem = document.getElementById("visits");
+      const updatedElem = document.getElementById("updated");
+
       try {
-        const res = await fetch(`https://api.countapi.xyz/get/sfzeroosint/${counterKey}`);
-        const data = await res.json();
-        document.getElementById("visits").textContent = data.value.toLocaleString();
-        document.getElementById("updated").textContent = new Date().toLocaleString();
-      } catch (e) {
-        document.getElementById("visits").textContent = "Error loading data";
+        const response = await fetch(`https://api.countapi.xyz/get/sfzeroosint/${counterKey}?${Date.now()}`);
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data = await response.json();
+
+        if (data.value !== undefined) {
+          visitsElem.textContent = data.value.toLocaleString();
+          updatedElem.textContent = new Date().toLocaleString();
+        } else {
+          throw new Error("Invalid response");
+        }
+      } catch (error) {
+        console.error("❌ Counter Error:", error);
+        visitsElem.textContent = "Error loading data";
       }
     }
 
     function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+
       if (user === adminUser && pass === adminPass) {
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("dashboard").style.display = "block";
         updateCounter();
       } else {
-        alert("Invalid login details!");
+        alert("❌ Invalid username or password!");
       }
     }
 
