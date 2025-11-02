@@ -4,109 +4,126 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SF × ZERO OSINT</title>
-  <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="logo.png">
   <script src="particles.js" defer></script>
 
-  <!-- ✅ Visit Counter + Analytics Script -->
+  <!-- ✅ Visit Counter + Analytics -->
   <script>
     async function logVisit() {
       try {
-        // 🔹 Increment total visit counter (CountAPI)
         await fetch('https://api.countapi.xyz/hit/sfzeroosint/site_visits');
-
-        // 🔹 Gather local visitor analytics
         const ua = navigator.userAgent;
         const os = navigator.platform;
         const browser = ua.includes("Chrome") ? "Chrome" :
                         ua.includes("Firefox") ? "Firefox" :
                         ua.includes("Safari") ? "Safari" : "Other";
-
-        // 🔹 Fetch visitor country (free API)
-        const countryRes = await fetch("https://ipapi.co/json/");
-        const countryData = await countryRes.json();
+        const res = await fetch("https://ipapi.co/json/");
+        const loc = await res.json();
 
         const visitData = {
           time: new Date().toISOString(),
-          country: countryData.country_name || "Unknown",
-          os: os,
-          browser: browser
+          country: loc.country_name || "Unknown",
+          os, browser
         };
-
-        // Save in localStorage (for Admin Dashboard)
         localStorage.setItem("lastVisit", JSON.stringify(visitData));
-        console.log("✅ Visit logged:", visitData);
-
-      } catch (err) {
-        console.warn("⚠️ Visit log failed:", err);
-      }
+      } catch (e) { console.warn("Visit logging failed:", e); }
     }
-
     logVisit();
   </script>
 
   <style>
-    /* === Neon Red Animated Background === */
+    /* === CLASSICAL DARK BACKGROUND (Theme 3) === */
     body {
-      background: radial-gradient(circle at center, #000000 0%, #090000 80%, #000000 100%);
-      animation: pulse 5s infinite alternate;
-      overflow: hidden;
-      color: white;
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a, #000000);
+      color: #fff;
       text-align: center;
       font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
     }
-    @keyframes pulse {
-      0% { background-color: #000000; box-shadow: 0 0 20px red; }
-      100% { background-color: #0a0000; box-shadow: 0 0 60px red; }
+
+    h1, .tagline {
+      color: #ff2e2e;
+      text-shadow: 0 0 10px #ff0000;
     }
-    h1, .tagline, footer, .btn, .admins, .counter {
-      text-shadow: 0 0 10px red, 0 0 20px red;
-    }
+
     a.btn {
-      background: black;
-      border: 1px solid red;
-      color: red;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      transition: 0.3s;
-      display: inline-block;
+      background: transparent;
+      border: 1px solid #ff0000;
+      color: #ff0000;
+      padding: 10px 25px;
       margin: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: 0.3s;
     }
     a.btn:hover {
-      background: red;
-      color: white;
-      box-shadow: 0 0 20px red;
+      background: #ff0000;
+      color: #fff;
+      box-shadow: 0 0 20px #ff0000;
     }
+
     footer {
-      margin-top: 20px;
-      color: red;
+      margin-top: 30px;
+      color: #ff0000;
       font-size: 14px;
     }
+
     .admins {
       margin-top: 30px;
     }
-    .admins h3 {
-      color: red;
-      margin-bottom: 10px;
+
+    /* === Admin Popup === */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
     }
-    .admins ul {
-      list-style: none;
-      padding: 0;
+    .modal-content {
+      background: #111;
+      border: 1px solid #ff0000;
+      border-radius: 10px;
+      padding: 20px;
+      width: 300px;
+      text-align: left;
+      box-shadow: 0 0 25px #ff0000;
     }
-    .admins a {
+    .modal-content h2 {
+      color: #ff0000;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .modal-content a {
+      display: block;
       color: white;
       text-decoration: none;
+      margin: 5px 0;
+      border-bottom: 1px solid #333;
+      padding: 5px;
+      transition: 0.2s;
     }
-    .admins a:hover {
-      color: red;
+    .modal-content a:hover {
+      color: #ff0000;
+    }
+    .close-btn {
+      background: #ff0000;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      float: right;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
-  <div id="particles"></div>
-
   <header>
     <img src="logo.png" alt="OSINT Logo" class="logo" style="width:120px;" />
     <h1>SF × ZERO OSINT</h1>
@@ -119,24 +136,37 @@
       <a href="howto.html" class="btn">How to Use</a>
       <a href="https://t.me/inflixosintro_bot" class="btn">Bot</a>
       <a href="admin.html" class="btn">Admin Login</a>
+      <a href="#" class="btn" id="contactAdminsBtn">Contact Admins</a>
     </div>
 
     <div class="counter">
       <img src="https://hits.sh/koyebxvaibhav-bot.github.io.svg?style=for-the-badge&label=visits&color=red&logo=github" alt="visits">
     </div>
-
-    <div class="admins">
-      <h3>Admins</h3>
-      <ul>
-        <li><a href="https://t.me/ze40_sir">@ze40_sir</a></li>
-        <li><a href="https://t.me/shadowfighter05">@shadowfighter05</a></li>
-        <li><a href="https://t.me/Anonymousvuy">@Anonymousvuy</a></li>
-      </ul>
-    </div>
   </main>
+
+  <!-- === Admin Popup === -->
+  <div class="modal" id="adminModal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeModal">X</button>
+      <h2>Contact Admins</h2>
+      <a href="https://t.me/ze40_sir" target="_blank">@ze40_sir</a>
+      <a href="https://t.me/shadowfighter05" target="_blank">@shadowfighter05</a>
+      <a href="https://t.me/Anonymousvuy" target="_blank">@Anonymousvuy</a>
+    </div>
+  </div>
 
   <footer>
     © 2025 SF × ZERO OSINT | Designed by @AnonymousVuy
   </footer>
+
+  <script>
+    // Popup open/close logic
+    const modal = document.getElementById('adminModal');
+    const btn = document.getElementById('contactAdminsBtn');
+    const closeBtn = document.getElementById('closeModal');
+    btn.onclick = () => modal.style.display = "flex";
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
+  </script>
 </body>
 </html>
