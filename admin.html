@@ -1,447 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Admin Dashboard • SF × ZERO OSINT</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | SF × ZERO OSINT</title>
+  <link rel="icon" href="logo.png" />
+  <style>
+    body {
+      margin: 0;
+      font-family: "Courier New", monospace;
+      color: #ff4444;
+      background: linear-gradient(135deg, #0a0a0a, #1a0000);
+      background-size: 400% 400%;
+      animation: gradientMove 10s ease infinite;
+      overflow-x: hidden;
+    }
 
-<!-- Chart.js for visitor graph -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-<link rel="stylesheet" href="style.css">
-<script src="particles.js" defer></script>
+    h2 {
+      text-shadow: 0 0 10px red;
+    }
 
-<style>
-  /* --- Neon Admin styles (keeps same vibe as your site) --- */
-  :root{
-    --red:#ff1e1e;
-    --bg:#070000;
-    --panel: rgba(15,0,0,0.85);
-    --glass: rgba(255,255,255,0.03);
-  }
-  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial; color:#fff; background:radial-gradient(circle at center, #000 0%, #060000 80%); overflow:hidden}
-  #particles{position:fixed; inset:0; z-index:0}
-  .wrap{position:relative; z-index:2; max-width:1024px; margin:40px auto; padding:20px;}
-  .topbar{display:flex; align-items:center; gap:16px; justify-content:space-between}
-  .brand{display:flex; align-items:center; gap:12px}
-  .brand img{width:56px; height:56px; object-fit:contain; border-radius:8px; box-shadow:0 0 18px rgba(255,0,0,0.12)}
-  h1{margin:0; color:var(--red); text-shadow:0 0 16px rgba(255,0,0,0.25); font-size:20px}
-  .subtitle{color:#bbb; font-size:13px}
+    .box {
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid red;
+      border-radius: 10px;
+      box-shadow: 0 0 20px red;
+      width: 90%;
+      max-width: 600px;
+      margin: 5% auto;
+      padding: 25px;
+      text-align: center;
+    }
 
-  .controls{display:flex; gap:10px; align-items:center}
-  .btn{background:#0a0000;border:1px solid var(--red); color:var(--red); padding:8px 12px; border-radius:8px; cursor:pointer; text-decoration:none; font-weight:600; box-shadow:0 0 10px rgba(255,0,0,0.06)}
-  .btn:hover{background:var(--red); color:#000; box-shadow:0 0 28px rgba(255,0,0,0.22)}
+    input, textarea, select {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #111;
+      color: red;
+      border: 1px solid red;
+      border-radius: 6px;
+    }
 
-  /* layout */
-  .grid{display:grid; grid-template-columns: 1fr 360px; gap:20px; margin-top:24px}
-  .panel{background:var(--panel); border:1px solid rgba(255,0,0,0.18); padding:18px; border-radius:12px; box-shadow:0 6px 30px rgba(255,0,0,0.06)}
-  .panel h3{margin:0 0 10px 0; color:var(--red)}
+    button {
+      background: black;
+      color: red;
+      border: 1px solid red;
+      border-radius: 6px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: red; color: white; }
 
-  .stat{font-size:22px; font-weight:700; color:#fff; text-shadow:0 0 10px rgba(255,0,0,0.12)}
-  .muted{color:#ccc; font-size:13px}
+    .section {
+      margin-top: 20px;
+      border-top: 1px solid red;
+      padding-top: 15px;
+    }
 
-  .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
-  .small{font-size:13px; color:#ddd}
-  .info{background:rgba(0,0,0,0.25); padding:10px; border-radius:8px; border:1px solid rgba(255,0,0,0.06)}
+    .stats, .visitors, .feedback {
+      text-align: left;
+      margin: 15px 0;
+    }
 
-  /* activity log list */
-  .log{max-height:240px; overflow:auto; padding:6px; background:rgba(0,0,0,0.15); border-radius:8px}
-  .log-item{padding:8px;border-bottom:1px dashed rgba(255,0,0,0.04); font-size:13px; color:#eee}
-
-  /* quick tools */
-  .tools{display:flex; gap:8px; flex-wrap:wrap}
-
-  /* chart container */
-  .chart-wrap{height:200px; background:linear-gradient(180deg, rgba(255,0,0,0.02), rgba(0,0,0,0.12)); display:flex; align-items:center; padding:8px; border-radius:8px}
-
-  /* footer */
-  footer{margin-top:30px; text-align:center; color:#aaa; font-size:13px}
-
-  /* loading */
-  .loading{display:inline-block; color:var(--red); font-weight:700}
-  .clock{font-weight:700; color:#ff8080}
-
-  /* responsive */
-  @media (max-width:900px){
-    .grid{grid-template-columns: 1fr; padding:0 12px}
-    .brand h1{display:none}
-  }
-
-  /* dark/light toggle */
-  .toggle{display:inline-flex; align-items:center; gap:8px}
-  .toggle input{display:none}
-</style>
+    .logout {
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
-  <div id="particles"></div>
-
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <img src="logo.png" alt="logo">
-        <div>
-          <h1>SF × ZERO OSINT</h1>
-          <div class="subtitle">Admin Dashboard • Neon Control Center</div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <div class="clock small" id="clock">--:--:--</div>
-        <div class="toggle">
-          <label class="small" style="color:#ddd">Theme</label>
-          <button class="btn" id="themeBtn">Dark</button>
-        </div>
-        <button class="btn" id="logoutQuick" title="Logout (clears session)">Logout</button>
-      </div>
-    </div>
-
-    <div class="grid">
-      <!-- left: main dashboard -->
-      <div>
-        <!-- Login panel (shows when not logged in) -->
-        <div class="panel" id="loginPanel">
-          <h3>🔐 Admin Login</h3>
-          <div class="row" style="margin-top:10px">
-            <input id="admUser" placeholder="Username" style="padding:10px;border-radius:8px;border:1px solid rgba(255,0,0,0.08); width:220px; background:rgba(0,0,0,0.5); color:#fff;">
-            <input id="admPass" placeholder="Password" type="password" style="padding:10px;border-radius:8px;border:1px solid rgba(255,0,0,0.08); width:220px; background:rgba(0,0,0,0.5); color:#fff;">
-            <button class="btn" id="loginBtn">Login</button>
-          </div>
-          <div style="margin-top:12px" class="muted">Login activity will be logged locally.</div>
-        </div>
-
-        <!-- Dashboard panel -->
-        <div class="panel" id="dashPanel" style="display:none">
-          <h3>📊 Overview</h3>
-
-          <div class="row" style="justify-content:space-between;align-items:center">
-            <div>
-              <div class="muted">Total Visits</div>
-              <div class="stat" id="totalVisits">—</div>
-            </div>
-
-            <div style="text-align:right">
-              <div class="muted">Last Updated</div>
-              <div class="small" id="lastUpdated">—</div>
-              <div class="small" id="welcome" style="margin-top:6px">Welcome, —</div>
-            </div>
-          </div>
-
-          <hr style="border:none;border-top:1px solid rgba(255,0,0,0.06); margin:12px 0">
-
-          <div class="chart-wrap">
-            <canvas id="visChart"></canvas>
-          </div>
-
-          <div style="display:flex; gap:12px; margin-top:12px; flex-wrap:wrap">
-            <div style="flex:1" class="info">
-              <div class="muted">Top Country</div>
-              <div id="topCountry" style="font-weight:700; color:#fff">—</div>
-            </div>
-            <div style="width:220px" class="info">
-              <div class="muted">Last Visitor</div>
-              <div id="lastVisitor" style="font-weight:700">—</div>
-            </div>
-          </div>
-
-          <div style="margin-top:12px">
-            <h4 style="margin:6px 0;color:var(--red)">Recent activity</h4>
-            <div class="log" id="activityLog"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- right: side panel -->
-      <aside>
-        <div class="panel">
-          <h3>Quick Tools</h3>
-          <div class="tools" style="margin-top:8px">
-            <button class="btn" id="openSite">Open Site</button>
-            <button class="btn" id="refreshCnt">Refresh</button>
-            <button class="btn" id="copyLink">Copy Link</button>
-            <button class="btn" id="resetStats">Reset Stats</button>
-          </div>
-
-          <hr style="border:none;border-top:1px solid rgba(255,0,0,0.06); margin:12px 0">
-
-          <h3>System Info</h3>
-          <div class="info" style="text-align:left; font-size:13px">
-            <div><strong>Browser:</strong> <span id="sysBrowser">—</span></div>
-            <div><strong>Platform:</strong> <span id="sysOS">—</span></div>
-            <div><strong>Resolution:</strong> <span id="sysRes">—</span></div>
-            <div><strong>API Ping:</strong> <span id="apiPing">—</span></div>
-          </div>
-
-        </div>
-      </aside>
-    </div>
-
-    <footer>© 2025 SF × ZERO OSINT | Designed by Karl</footer>
+  <div class="box" id="loginBox">
+    <h2>🔐 Admin Login</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
   </div>
 
-<script>
-/* -------------------------
-  CONFIG
-------------------------- */
-const ADMIN_USER = "Admin";
-const ADMIN_PASS = "Admin10";
-const COUNT_NAMESPACE = "sfzeroosint";
-const COUNT_KEY = "site_visits";
-const SITE_URL = "https://koyebxvaibhav-bot.github.io/SF-x-Zero-osint/";
+  <div class="box" id="dashboard" style="display:none;">
+    <h2>📊 SF × ZERO OSINT Dashboard</h2>
+    <div class="section stats">
+      <h3>Site Statistics</h3>
+      <p><b>Total Visits:</b> <span id="visits">Loading...</span></p>
+      <p><b>Last Updated:</b> <span id="updated"></span></p>
+    </div>
 
-/* -------------------------
-  UTIL & STATE
-------------------------- */
-let chart=null;
-let visitHistory = JSON.parse(localStorage.getItem('visitHistory') || '[]'); // saved array of {time, country}
+    <div class="section system">
+      <h3>System Info</h3>
+      <p><b>Browser:</b> <span id="browser"></span></p>
+      <p><b>OS:</b> <span id="os"></span></p>
+      <p><b>Screen:</b> <span id="screen"></span></p>
+    </div>
 
-/* -------------------------
-  UI elements
-------------------------- */
-const loginPanel = document.getElementById('loginPanel');
-const dashPanel  = document.getElementById('dashPanel');
-const loginBtn   = document.getElementById('loginBtn');
-const admUserEl  = document.getElementById('admUser');
-const admPassEl  = document.getElementById('admPass');
-const totalVisitsEl = document.getElementById('totalVisits');
-const lastUpdatedEl = document.getElementById('lastUpdated');
-const welcomeEl  = document.getElementById('welcome');
-const activityLogEl = document.getElementById('activityLog');
-const topCountryEl = document.getElementById('topCountry');
-const lastVisitorEl = document.getElementById('lastVisitor');
-const openSiteBtn = document.getElementById('openSite');
-const refreshCntBtn = document.getElementById('refreshCnt');
-const copyLinkBtn  = document.getElementById('copyLink');
-const resetStatsBtn = document.getElementById('resetStats');
-const sysBrowserEl = document.getElementById('sysBrowser');
-const sysOSEl = document.getElementById('sysOS');
-const sysResEl = document.getElementById('sysRes');
-const apiPingEl = document.getElementById('apiPing');
-const clockEl = document.getElementById('clock');
-const logoutQuick = document.getElementById('logoutQuick');
-const themeBtn = document.getElementById('themeBtn');
+    <div class="section visitors">
+      <h3>Recent Visitors</h3>
+      <ul id="visitorList">
+        <li>Fetching...</li>
+      </ul>
+    </div>
 
-/* -------------------------
-  Clock
-------------------------- */
-function startClock(){
-  setInterval(()=> {
-    const now = new Date();
-    clockEl.textContent = now.toLocaleTimeString();
-  },1000);
-}
-startClock();
+    <div class="section feedback">
+      <h3>Feedback Manager</h3>
+      <textarea id="feedback" placeholder="Write notes or visitor feedback..."></textarea>
+      <button onclick="saveFeedback()">💾 Save Feedback</button>
+      <p id="saveMsg"></p>
+    </div>
 
-/* -------------------------
-  Theme toggle (simple)
-------------------------- */
-let dark=true;
-themeBtn.onclick = () => {
-  dark = !dark;
-  themeBtn.textContent = dark ? 'Dark' : 'Light';
-  document.body.style.filter = dark ? 'none' : 'invert(1) hue-rotate(180deg)';
-};
+    <div class="section theme">
+      <h3>Theme Switcher</h3>
+      <select id="themeSelect" onchange="changeTheme()">
+        <option value="classic">Classic Red</option>
+        <option value="dark">Dark Neon</option>
+        <option value="matrix">Matrix Green</option>
+      </select>
+    </div>
 
-/* -------------------------
-  Activity log (localStorage)
-------------------------- */
-function pushActivity(text){
-  const now = new Date().toLocaleString();
-  const item = {time: new Date().toISOString(), text};
-  // keep local
-  let arr = JSON.parse(localStorage.getItem('adminActivity') || '[]');
-  arr.unshift(item);
-  if(arr.length>40) arr = arr.slice(0,40);
-  localStorage.setItem('adminActivity', JSON.stringify(arr));
-  renderActivity();
-}
-function renderActivity(){
-  const arr = JSON.parse(localStorage.getItem('adminActivity') || '[]');
-  activityLogEl.innerHTML = arr.slice(0,20).map(it=>`<div class="log-item"><strong>${new Date(it.time).toLocaleString()}</strong> — ${it.text}</div>`).join('');
-}
+    <div class="section links">
+      <h3>Quick Links</h3>
+      <a href="https://koyebxvaibhav-bot.github.io/SF-x-Zero-osint/" target="_blank">🌐 Open Site</a><br>
+      <a href="https://countapi.xyz/" target="_blank">📈 CountAPI</a>
+    </div>
 
-/* -------------------------
-  CountAPI helpers
-------------------------- */
-async function ensureCounter(){
-  // call hit once to ensure exists (safe)
-  try{
-    await fetch(`https://api.countapi.xyz/hit/${COUNT_NAMESPACE}/${COUNT_KEY}`);
-  }catch(e){
-    console.warn('count init fail', e);
-  }
-}
-async function getCounter(){
-  try{
-    const r = await fetch(`https://api.countapi.xyz/get/${COUNT_NAMESPACE}/${COUNT_KEY}?t=${Date.now()}`);
-    if(!r.ok) throw new Error('count fetch failed');
-    return await r.json();
-  }catch(e){
-    console.error(e);
-    return null;
-  }
-}
+    <div class="logout">
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
 
-/* -------------------------
-  Chart (visits history)
-------------------------- */
-function initChart(){
-  const ctx = document.getElementById('visChart').getContext('2d');
-  chart = new Chart(ctx, {
-    type:'line',
-    data:{
-      labels: visitHistory.map(v=> new Date(v.time).toLocaleTimeString()).reverse(),
-      datasets:[{
-        label:'Visits (recent)',
-        data: visitHistory.map((v,i)=> i+1).reverse(),
-        borderColor: 'rgba(255,50,50,0.9)',
-        backgroundColor: 'rgba(255,20,20,0.12)',
-        fill:true,
-        tension:0.3
-      }]
-    },
-    options:{
-      responsive:true,
-      scales:{ y:{ beginAtZero:true } }
+  <script>
+    const adminUser = "koyebxvaibhav-bot";
+    const adminPass = "C!7rP9vQ";
+
+    // Login system
+    function login() {
+      const u = document.getElementById("username").value;
+      const p = document.getElementById("password").value;
+      if (u === adminUser && p === adminPass) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        loadDashboard();
+      } else alert("❌ Invalid login details!");
     }
-  });
-}
 
-/* -------------------------
-  System info
-------------------------- */
-function fillSystemInfo(){
-  sysBrowserEl.textContent = navigator.userAgent.split(')')[0] || navigator.userAgent;
-  sysOSEl.textContent = navigator.platform || 'Unknown';
-  sysResEl.textContent = `${window.innerWidth}x${window.innerHeight}`;
-}
+    function logout() {
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("loginBox").style.display = "block";
+    }
 
-/* -------------------------
-  Update dashboard (main)
-------------------------- */
-async function updateDashboard(){
-  // total visits
-  const data = await getCounter();
-  if(data && data.value !== undefined){
-    totalVisitsEl.textContent = data.value.toLocaleString();
-  } else {
-    totalVisitsEl.textContent = 'Error';
-  }
-  lastUpdatedEl.textContent = new Date().toLocaleString();
-
-  // last visitor info (from localStorage)
-  const last = visitHistory[0];
-  if(last){
-    lastVisitorEl.textContent = `${last.country} • ${new Date(last.time).toLocaleString()}`;
-  } else {
-    lastVisitorEl.textContent = 'No recent visitors';
-  }
-
-  // compute top country
-  const counts = {};
-  visitHistory.forEach(v=> counts[v.country] = (counts[v.country]||0)+1);
-  let top = '—';
-  let topCount = 0;
-  for(const c in counts) if(counts[c]>topCount){ topCount=counts[c]; top=c }
-  topCountryEl.textContent = top=== '—' ? '—' : `${top} (${topCount})`;
-
-  // update chart
-  if(chart){
-    chart.data.labels = visitHistory.map(v=> new Date(v.time).toLocaleTimeString()).reverse();
-    chart.data.datasets[0].data = visitHistory.map((v,i)=> i+1).reverse();
-    chart.update();
-  }
-
-  // ping API
-  const start = Date.now();
-  try{
-    await fetch(`https://api.countapi.xyz/get/${COUNT_NAMESPACE}/${COUNT_KEY}`);
-    apiPingEl.textContent = `${Date.now()-start} ms`;
-  }catch(e){ apiPingEl.textContent = 'Error'; }
-}
-
-/* -------------------------
-  Login flow
-------------------------- */
-loginBtn.onclick = () => {
-  const u = admUserEl.value.trim();
-  const p = admPassEl.value.trim();
-  if(u===ADMIN_USER && p===ADMIN_PASS){
-    // show dashboard
-    loginPanel.style.display = 'none';
-    dashPanel.style.display = 'block';
-    welcomeEl.textContent = `Welcome, ${u}!`;
-    pushActivity(`Logged in as ${u}`);
-    // init
-    ensureCounter().then(()=>updateAll());
-    fillSystemInfo();
-    initChart();
-  } else {
-    alert('Invalid credentials');
-  }
-};
-
-logoutQuick.onclick = () => {
-  if(confirm('Logout now?')) {
-    pushActivity('Logged out (quick)');
-    location.reload();
-  }
-};
-
-/* -------------------------
-  Quick tools
-------------------------- */
-openSiteBtn.onclick = ()=> window.open(SITE_URL,'_blank');
-refreshCntBtn.onclick = ()=> updateAll();
-copyLinkBtn.onclick = async ()=>{
-  try{ await navigator.clipboard.writeText(SITE_URL); alert('Site link copied'); }catch(e){ alert('Copy failed'); }
-};
-resetStatsBtn.onclick = ()=>{
-  if(!confirm('Reset local visit history? This does not reset CountAPI total.')) return;
-  visitHistory = [];
-  localStorage.removeItem('visitHistory');
-  pushActivity('Cleared local visit history');
-  updateAll();
-};
-
-/* -------------------------
-  Visit logging (to local history)
-  This reads lastVisit saved by index.html script (it writes one)
-------------------------- */
-function loadLocalVisits(){
-  try{
-    const v = JSON.parse(localStorage.getItem('lastVisit') || 'null');
-    if(v && v.time){
-      // push to history if newest
-      if(!visitHistory.length || visitHistory[0].time !== v.time){
-        visitHistory.unshift(v);
-        if(visitHistory.length>50) visitHistory = visitHistory.slice(0,50);
-        localStorage.setItem('visitHistory', JSON.stringify(visitHistory));
-        pushActivity(`Visitor: ${v.country} (${v.browser})`);
+    // Fetch visit counter
+    async function loadDashboard() {
+      try {
+        const res = await fetch("https://api.countapi.xyz/get/sfzeroosint/sfzeroosint_site_visits");
+        const data = await res.json();
+        document.getElementById("visits").textContent = data.value;
+      } catch {
+        document.getElementById("visits").textContent = "Error loading data";
       }
+      document.getElementById("updated").textContent = new Date().toLocaleString();
+      loadSystemInfo();
+      loadVisitors();
     }
-  }catch(e){ console.warn('load local visits failed', e); }
-}
 
-/* -------------------------
-  Update everything helper
-------------------------- */
-async function updateAll(){
-  loadLocalVisits(); // integrate any new local visit recorded by index.html
-  await updateDashboard();
-  renderActivity();
-  fillSystemInfo();
-  // schedule auto-refresh
-  setTimeout(updateAll, 30000);
-}
+    // System info
+    function loadSystemInfo() {
+      document.getElementById("browser").textContent = navigator.userAgent;
+      document.getElementById("os").textContent = navigator.platform;
+      document.getElementById("screen").textContent = `${screen.width}x${screen.height}`;
+    }
 
-/* -------------------------
-  Init: restore history + UI
-------------------------- */
-(function init(){
-  visitHistory = JSON.parse(localStorage.getItem('visitHistory') || '[]');
-  renderActivity();
-  fillSystemInfo();
-})();
-</script>
+    // Mock visitors
+    function loadVisitors() {
+      const list = [
+        "User#248 from India",
+        "User#301 from USA",
+        "User#522 from Germany",
+        "User#120 from Unknown"
+      ];
+      const el = document.getElementById("visitorList");
+      el.innerHTML = "";
+      list.forEach(v => {
+        const li = document.createElement("li");
+        li.textContent = v;
+        el.appendChild(li);
+      });
+    }
+
+    // Feedback save
+    function saveFeedback() {
+      const fb = document.getElementById("feedback").value.trim();
+      if (!fb) return alert("Please write something!");
+      localStorage.setItem("adminFeedback", fb);
+      document.getElementById("saveMsg").textContent = "✅ Feedback saved locally!";
+    }
+
+    // Theme switcher
+    function changeTheme() {
+      const theme = document.getElementById("themeSelect").value;
+      if (theme === "dark")
+        document.body.style.background = "linear-gradient(135deg, #000, #111)";
+      else if (theme === "matrix")
+        document.body.style.background = "radial-gradient(circle, #001a00, #000)";
+      else
+        document.body.style.background = "linear-gradient(135deg, #0a0a0a, #1a0000)";
+    }
+  </script>
 </body>
 </html>
